@@ -1,4 +1,4 @@
-# Virtual Environment Rule
-- Always use `.venv` for Python virtual environments
-- Never use `venv` or other names
-- Create with: `python -m venv .venv`
+# Git Automation Rules
+- Always commit Memory Bank changes with message format: "MB: [brief change description]"
+- Commit immediately after any documentation updates
+- Include all Memory Bank files in every commit
