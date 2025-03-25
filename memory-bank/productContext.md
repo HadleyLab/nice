@@ -11,9 +11,12 @@ Enable rapid development of complex NiceGUI applications through reusable builde
 
 ## User Experience Goals
 1. Configurable UI components through YAML
-2. Real-time feedback for async operations
+2. Real-time feedback for async operations  
 3. Consistent error handling across components
 4. Modular architecture for easy extension
+5. Atomic component styling with parent-controlled layout
+6. Consistent spacing through gap utilities
+7. Structural width definitions for responsiveness
 
 ## Key Interactions
 - Live configuration editing with immediate UI updates
