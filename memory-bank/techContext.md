@@ -1,11 +1,16 @@
-## Styling Utilities
-- Parent-controlled layout system using flex/grid
-- Gap-based spacing utilities
-- Atomic component design pattern
-- Structural width definitions (w-full)
-
-## Version Control
-- Git automation rules enforce documentation integrity:
-  - All Memory Bank changes must be committed immediately
-  - Commit messages use "MB: [description]" format
-  - Entire memory-bank directory is tracked
+# Technical Stack
+- NiceGUI for UI components
+- Asyncio for async task handling
+- Component Structure:
+  - /components
+    /builders - UI construction (1:1 with configs)
+    /configs - State configurations (colors, icons, durations)
+    /utils - Shared utilities (logging/notifications)
+- State Management:
+  - Config objects serialize to JSON
+  - Persisted in app.state.tasks
+  - Atomic state updates through _update_state()
+- Notification System:
+  - Centralized logging with severity levels
+  - Configurable display durations
+  - Channel-based routing (tasks/system)

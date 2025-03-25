@@ -1,5 +1,17 @@
-# Git Automation Rules
-1. Make documentation updates first
-2. Commit all changes with message format: "MB: [brief change description]"
-3. Include all Memory Bank files in every commit
-4. Commit must follow documentation updates (never precede them)
+# Project Patterns
+1. Config-Builder Relationship:
+   - 1:1 pairing between Config and Builder classes
+   - Configs define state properties (colors, icons, durations)
+   - Builders handle UI/behavior implementation
+   - Access via `config.*` and `builder.*` namespaces
+
+2. State Management:
+   - Atomic updates through _update_state()
+   - Clean initialization sequence: create_ui → load_state → update_state
+   - State persistence in app.state.tasks dictionary
+
+3. Notification System:
+   - Centralized through utils/notifications.py
+   - Severity-based logging (INFO, WARN, ERROR)
+   - Configurable display durations
+   - Channel-based routing (tasks/system)
