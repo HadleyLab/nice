@@ -1,0 +1,4 @@
+# Virtual Environment Rule
+- Always use `.venv` for Python virtual environments
+- Never use `venv` or other names
+- Create with: `python -m venv .venv`

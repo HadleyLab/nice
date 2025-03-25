@@ -1,0 +1,20 @@
+button_task:
+  task_name: "sample_task"
+  timeout: 3.5
+  button_label: "Process Data" 
+  success_label: "Data processed!"
+  error_label: "Processing failed"
+  button_color: "primary"
+  notification_duration: 4.0
+
+button_task_series:
+  series_name: "demo_series"
+  tasks: ["task1", "task2"]
+  completion_delay: 1.5
+  abort_on_failure: true
+  timeout: 10.0
+  button_label: "Run Series"
+  success_label: "Series Completed!"
+  error_label: "Series Failed!"
+  button_color: "primary" 
+  notification_duration: 5.0
