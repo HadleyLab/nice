@@ -1,4 +1,5 @@
 # Git Automation Rules
-- Always commit Memory Bank changes with message format: "MB: [brief change description]"
-- Commit immediately after any documentation updates
-- Include all Memory Bank files in every commit
+1. Make documentation updates first
+2. Commit all changes with message format: "MB: [brief change description]"
+3. Include all Memory Bank files in every commit
+4. Commit must follow documentation updates (never precede them)
