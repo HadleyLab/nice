@@ -1,21 +1,36 @@
 # Technology Stack
 
-## Core Dependencies
-- NiceGUI 1.4.1 (Reactive UI framework)
-- Python 3.11 (Type hints, async/await)
+## Core Architecture
 
-## Key Patterns
-- **State Management**: Native `ui.state()` for reactive properties
-- **Component Architecture**: Prefer direct NiceGUI components over custom builders
-- **Validation**: Leverage built-in validation and notifications
-- **Async Operations**: Use NiceGUI's native async support
+## Runtime Configuration
+- Server port: 8081 (configured in main.py)
+- Auto-reload enabled during development
+- Production deployment via `uvicorn main:app`
+```mermaid
+flowchart TD
+    A[Main App] --> B[Modules]
+    B --> C[Pages]
+    C --> D[Components]
+    D --> E[Native NiceGUI Elements]
+```
 
 ## Implementation Principles
-1. Always prefer native NiceGUI functionality over custom implementations
-2. Minimize custom builder patterns when standard components suffice
-3. Utilize built-in state management and reactivity
-4. Leverage NiceGUI's automatic DOM updates
+1. Strict module-based organization:
+   - `modules/` for reusable UI components
+   - `pages/` for route-specific layouts
+2. Pure NiceGUI elements only
+3. Native theme colors and spacing
+4. Built-in responsive grid system
+5. Standard NiceGUI typography classes
 
-## Critical Update
-- Removed deprecated `ui.ref()` usage in favor of `ui.state()`
-- Simplified reactive state management patterns
+## Required Patterns
+- Page layouts using `ui.header()`, `ui.footer()`, `ui.left_drawer()`
+- Component composition with `@ui.refreshable`
+- State management through `ui.state()`
+- Navigation via `ui.link()` and `ui.page()`
+
+## Forbidden Patterns
+- Custom CSS classes
+- Inline style attributes
+- Raw HTML elements
+- External CSS/JS imports

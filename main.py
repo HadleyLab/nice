@@ -1,27 +1,32 @@
-from nicegui import ui, app
-from components.ui_elements.button.config import ButtonConfig
-from components.ui_elements.series.builder import SeriesBuilder
-from components.ui_elements.series.config import SeriesConfig
-import pages.home  # Ensures home page registration
+from nicegui import ui
+from components.ui_elements.base.builder import BaseLayout
+from pages.home import create as create_home
+from pages.about import create as create_about
+from pages.settings import create as create_settings
 
-def register_pages():
-    """Register all application pages"""
-    app.add_static_files("/pages", "pages")
-    
-    @ui.page("/")
-    def home():
-        pages.home.create()
-        
-    @ui.page("/settings")
-    def settings():
-        ui.label("Settings Page").classes("text-2xl")
-        # Add settings components here
+@ui.page('/')
+def home_page():
+    """Home page route"""
+    with BaseLayout() as content:
+        create_home()
 
-if __name__ in {"__main__", "__mp_main__"}:
-    register_pages()
-    ui.run(
-        title="Component Demo",
-        port=8080,
-        reload=True,
-        show=True
-    )
+@ui.page('/about')
+def about_page():
+    """About page route"""
+    with BaseLayout() as content:
+        create_about()
+
+@ui.page('/settings')
+def settings_page():
+    """Settings page route"""
+    with BaseLayout() as content:
+        create_settings()
+
+# Theme configuration
+ui.run(
+    title='My NiceGUI App',
+    reload=False,
+    dark=False,
+    favicon='https://nicegui.io/favicon.ico',
+    port=8081
+)
