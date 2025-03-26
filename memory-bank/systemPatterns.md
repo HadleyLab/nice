@@ -1,28 +1,31 @@
 # Architectural Patterns
-1. Component Structure:
-   - Builders handle UI construction and state transitions
-   - Configs manage persistent state and styling rules
-   - Notifications system handles unified logging/feedback
 
-2. Button Component Flow:
+## Component Relationships
 ```mermaid
 flowchart TD
-    Click[Button Click] --> Handler[Click Handler]
-    Handler --> Try[Try Block]
-    Try --> UpdateState[Update Active State]
-    Try --> SimulateTask[2s Timer]
-    SimulateTask --> Complete[Mark Completed]
-    Complete --> UpdateState
-    Handler --> Catch[Catch Block]
-    Catch --> ErrorState[Set Error State]
-    ErrorState --> Notify[Show Error Notification]
-    
-    UpdateState --> Styles[Apply CSS Classes]
-    UpdateState --> Log[Task Logging]
+    BaseConfig --> ButtonConfig
+    BaseConfig --> SeriesConfig
+    ButtonConfig --> ButtonBuilder
+    SeriesConfig --> SeriesBuilder
+    Utils --> NotificationHandler
+    Utils --> StateManager
+    NotificationHandler --> ButtonBuilder
+    StateManager --> ButtonBuilder
 ```
 
-3. Notification Integration:
-   - Centralized task_log_and_notify() handler
-   - Color-coded status messages
-   - Dual logging (console + UI)
-   - Error channel separation
+## Validation Workflow
+```mermaid
+flowchart TD
+    Init[Model Init] --> FieldCheck[Field-level Validation]
+    FieldCheck --> ModelCheck[Model Validator]
+    ModelCheck -->|Valid| StateUpdate[Update State]
+    ModelCheck -->|Invalid| Error[Raise ValueError]
+    Error --> Notify[Error Notification]
+    StateUpdate --> Render[UI Re-render]
+```
+
+## Notification Integration
+- Centralized task_log_and_notify() handler
+- Color-coded status messages
+- Dual logging (console + UI)
+- Error channel separation

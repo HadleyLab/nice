@@ -78,7 +78,7 @@ class SeriesBuilder:
             ui.notify(f"Processing task {task_num}/{total_tasks}", type=self.config.status_type, timeout=2)
             try:
                 # Reset button state before execution
-                btn.btn.props(f'icon={btn.config.default_icon} color={btn.config.severity.value}')
+                btn.btn.props(f'icon={btn.config.default_icon} color={btn.config.severity}')
                 
                 # Execute task with proper ID and wait for completion
                 await asyncio.run.cpu_bound(
@@ -90,16 +90,14 @@ class SeriesBuilder:
             except Exception as e:
                 failure_count += 1
                 failed_tasks.append((task_num, str(e)))
+                btn.config.severity = SeverityLevel.ERROR
+                btn.btn.props(f'color={btn.config.severity} icon=error')
+                ui.notify(f"Task {idx+1} failed: {str(e)}", type='negative', timeout=3000)
             # Update progress after each task regardless of success
             completed = idx + 1
             self.progress.value = completed / total_tasks
             self.status_label.set_text(f"{completed}/{total_tasks} tasks completed")
             btn.btn.loading = False
-            
-            if isinstance(e, Exception):
-                btn.config.severity = SeverityLevel.ERROR
-                btn.btn.props(f'color={btn.config.severity.value} icon=error')
-                ui.notify(f"Task {idx+1} failed: {str(e)}", type='negative', timeout=3000)
 
         # Update Run All button state
         final_icon = self.config.run_all_completion_icon if failure_count == 0 else 'error'

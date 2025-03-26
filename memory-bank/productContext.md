@@ -1,25 +1,16 @@
-# Product Context
+# Product Purpose
+- Prevent invalid UI states through strict validation
+- Ensure consistent task execution tracking
+- Provide clear user feedback through notifications
 
-## Purpose
-Enable rapid development of complex NiceGUI applications through reusable builder patterns and centralized configuration.
-
-## Problem Space
-- Reduces boilerplate in stateful UI development
-- Simplifies async task coordination
-- Provides consistent error handling patterns
-- Enables non-technical configuration through YAML
+## Core Validation Requirements
+1. Unique identifiers for all interactive elements
+2. Atomic state updates to prevent partial configurations
+3. Visual feedback for validation errors
+4. Persistent state across sessions
 
 ## User Experience Goals
-1. Configurable UI components through YAML
-2. Real-time feedback for async operations  
-3. Consistent error handling across components
-4. Modular architecture for easy extension
-5. Atomic component styling with parent-controlled layout
-6. Consistent spacing through gap utilities
-7. Structural width definitions for responsiveness
-
-## Key Interactions
-- Live configuration editing with immediate UI updates
-- Visual task progress indicators
-- Automated notification system
-- Centralized state management
+- Immediate feedback on invalid inputs
+- Clear error messages with resolution hints
+- Consistent styling for different validation states
+- Audit trail of configuration changes
