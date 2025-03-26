@@ -3,25 +3,24 @@
 ## Component Relationships
 ```mermaid
 flowchart TD
-    BaseConfig --> ButtonConfig
-    BaseConfig --> SeriesConfig
-    ButtonConfig --> ButtonBuilder
-    SeriesConfig --> SeriesBuilder
-    Utils --> NotificationHandler
-    Utils --> StateManager
-    NotificationHandler --> ButtonBuilder
-    StateManager --> ButtonBuilder
+    Base --> Button
+    Base --> Series
+    Button --> Pages
+    Series --> Pages
 ```
 
-## Validation Workflow
+## Configuration Management
+- Native niceGUI configuration system
+- Default values in component classes
+- Runtime customization through UI properties
+- Built-in type validation
+
+## UI Element Integration
 ```mermaid
 flowchart TD
-    Init[Model Init] --> FieldCheck[Field-level Validation]
-    FieldCheck --> ModelCheck[Model Validator]
-    ModelCheck -->|Valid| StateUpdate[Update State]
-    ModelCheck -->|Invalid| Error[Raise ValueError]
-    Error --> Notify[Error Notification]
-    StateUpdate --> Render[UI Re-render]
+    Init[Component Init] --> Render[UI Rendering]
+    Render -->|User Interaction| Update[State Update]
+    Update --> ReRender[Automatic UI Refresh]
 ```
 
 ## Notification Integration

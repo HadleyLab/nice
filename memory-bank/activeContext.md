@@ -1,18 +1,14 @@
-# Active Context - State Management Improvements
-
-## Current Focus
-- Implemented proper loading states for series tasks
-- Using NiceGUI's native lifecycle management
-- Simplified notification system
-- Centralized error handling
+# Current Focus
+- Resolved ButtonConfig validation issues
+- Implemented required UID field handling
+- Unified validation workflow
 
 ## Recent Changes
-1. Added loading spinners for Run All button
-2. Individual task buttons now show loading states
-3. Removed custom notification system
-4. Error handling uses NiceGUI's built-in features
+- Added uid field to ButtonConfig with validation
+- Consolidated validation into single model validator
+- Updated technical documentation
 
 ## Next Steps
-- Monitor runtime performance
-- Verify state consistency across parallel operations
-- Document component lifecycle patterns
+1. Verify UI button state persistence
+2. Test task completion notifications
+3. Validate error handling for invalid UIDs

@@ -17,7 +17,7 @@ class ButtonBuilder(BaseBuilder):
         """Construct the button element"""
         super().build()
         self.btn = ui.button(self.config.task_name)\
-            .props(f'icon={self.config.default_icon} color={self.config.severity.value}')
+            .props(f'icon={self.config.default_icon} color={self.config.severity}')
         self._setup_handlers()
         return self.container
         
@@ -38,7 +38,7 @@ class ButtonBuilder(BaseBuilder):
         self.btn.props(f'icon={self.config.active_icon} color=primary')
         self.btn.loading = True
         ui.notify(f"Starting: {self.config.task_name}", 
-                type=self.config.severity.value,
+                type=self.config.severity,
                 clearable=True,
                 timeout=self.config.notification_duration)
         
@@ -67,16 +67,20 @@ class ButtonBuilder(BaseBuilder):
                 while not timer_complete:
                     await asyncio.sleep(0.01)
                 
-                self.btn.props(f'icon={self.config.default_icon} color={self.config.severity.value}')
+                self.btn.props(f'icon={self.config.default_icon} color={self.config.severity}')
                 
             except Exception as e:
-                traceback.print_exc()
-                self.config.severity = SeverityLevel.ERROR
-                self.btn.props(f'color={self.config.severity.value} icon=error')
+                traceback.print_exc()  # Log full error to console
+                severity = BaseConfig.get_severity(e)
+                message = f"Failed: {self.config.task_name}"
+                if hasattr(e, "message"):
+                    message += f" - {e.message}"
+                
+                self.btn.props(f'color={severity.value} icon=error')
                 self.btn.loading = False
-                ui.notify(f"Failed: {self.config.task_name} - {str(e)}", 
-                        type=self.config.severity.value,
+                ui.notify(message,
+                        type=severity.value,
                         clearable=True,
-                        timeout=self.config.notification_duration)
+                        timeout=self.config.default_notification_duration)
         
         await execute_task()

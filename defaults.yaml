@@ -1,20 +1,24 @@
-button_task:
-  task_name: "sample_task"
-  timeout: 3.5
-  button_label: "Process Data" 
-  success_label: "Data processed!"
-  error_label: "Processing failed"
-  button_color: "primary"
-  notification_duration: 4.0
+# Default configuration values for UI components
+button:
+  task_name: "Perform Task"
+  default_icon: "play_circle"
+  active_icon: "hourglass_empty" 
+  completion_icon: "check_circle"
+  severity: "primary"
+  notification_duration: 2.5
 
-button_task_series:
-  series_name: "demo_series"
-  tasks: ["task1", "task2"]
-  completion_delay: 1.5
-  abort_on_failure: true
-  timeout: 10.0
-  button_label: "Run Series"
-  success_label: "Series Completed!"
-  error_label: "Series Failed!"
-  button_color: "primary" 
-  notification_duration: 5.0
+series:
+  series_name: "Task Series"
+  spacing: "gap-4"
+  layout: "column"
+  completion_icon: "done_all"
+  log_severity: "positive"
+  enable_run_all: true
+  run_all_label: "Run All Tasks"
+  run_all_severity: "primary"
+  run_all_icon: "play_arrow"
+  run_all_completion_icon: "check_circle" 
+  progress_color: "primary"
+  status_type: "ongoing"
+  status_icon: "rotate_right"
+  notification_duration: 3.0

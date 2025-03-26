@@ -1,28 +1,26 @@
+from pydantic import Field, model_validator, ConfigDict
 from ..base.config import BaseConfig, SeverityLevel
 
 class ButtonConfig(BaseConfig):
     """Configuration for interactive button elements"""
-    task_name: str = "New Task"
-    default_icon: str = "play_arrow"
-    active_icon: str = "hourglass_empty" 
-    completion_icon: str = "check"
-    notification_duration: int = 3000
-    failure_rate: float = 0.2  # 20% simulated failure chance
-    severity: SeverityLevel = SeverityLevel.INFO
+    uid: str = Field(min_length=1)
+    task_name: str = Field(default="New Task", min_length=1)
+    default_icon: str = Field(default="play_arrow", pattern=r"^[a-z_]+$")
+    active_icon: str = Field(default="hourglass_empty", pattern=r"^[a-z_]+$")
+    completion_icon: str = Field(default="check", pattern=r"^[a-z_]+$")
+    notification_duration: int = Field(default=3000, gt=0)
+    failure_rate: float = Field(default=0.2, ge=0, le=1)
+    severity: SeverityLevel = Field(default=SeverityLevel.INFO)
 
-    def __init__(self,
-                 uid: str,
-                 task_name: str = "New Task",
-                 severity: SeverityLevel = SeverityLevel.INFO,
-                 **kwargs):
-        super().__init__(uid=uid)
-        self.task_name = task_name
-        self.color = severity.value
-        self.__dict__.update(kwargs)
-
-    def validate(self):
-        super().validate()
+    @model_validator(mode="after")
+    def validate_required_fields(self) -> "ButtonConfig":
+        if not self.uid:
+            raise ValueError("UID is required")
         if not self.task_name:
             raise ValueError("Task name is required")
-        if not 0 <= self.failure_rate <= 1:
-            raise ValueError("Failure rate must be between 0 and 1")
+        return self
+
+    model_config = ConfigDict(
+        extra="forbid",
+        validate_default=True
+    )

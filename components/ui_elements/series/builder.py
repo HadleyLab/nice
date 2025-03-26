@@ -1,9 +1,11 @@
 import asyncio
+import traceback
+import time
 
 from components.ui_elements.base.config import SeverityLevel
 from .config import SeriesConfig
 from components.ui_elements.button.builder import ButtonBuilder
-from nicegui import ui
+from nicegui import run, ui
 
 class SeriesBuilder:
     """Constructs and manages a series of related UI tasks"""
@@ -11,6 +13,19 @@ class SeriesBuilder:
     def __init__(self, config: SeriesConfig):
         self.config = config
         self.buttons = []
+
+    def _notify(self, message: str, severity: str = 'info', log: bool = False):
+        """Centralized notification handler with logging support"""
+        if log:
+            print(f"[{severity.upper()}] {message}")
+        else:
+            ui.notify(
+                message,
+                type=severity,
+                icon=self.config.status_icon,
+                timeout=self.config.notification_duration,
+                close_button='Close'
+            )
         
     def build(self):
         """Context manager for building the series"""
@@ -25,9 +40,8 @@ class SeriesBuilder:
                 button = ButtonBuilder(btn_config)
                 self.buttons.append(button)
                 with button.build():
-                    pass  # Button context handles its own rendering
+                    pass
         return self.container
-
 
     def delete(self):
         """Clean up all series components"""
@@ -38,12 +52,6 @@ class SeriesBuilder:
     def add_run_all_button(self):
         """Add master run button to top of series"""
         with self.container: 
-            type_map = {
-                'info': 'info',
-                'success': 'positive',
-                'warning': 'warning',
-                'error': 'negative'
-            }
             (ui.button(self.config.run_all_label, icon=self.config.run_all_icon)
                 .props(f"unelevated color={self.config.run_all_severity} loading-spinner")
                 .classes("w-full mb-4 p-4 font-bold rounded-lg hover:opacity-90 transition-all")
@@ -63,71 +71,51 @@ class SeriesBuilder:
         self.progress.value = 0
         self.status_label.set_text(f"0/{total_tasks} tasks completed")
         
-        ui.notify(
+        self._notify(
             f"Starting series '{self.config.series_name}'...",
-            type=self.config.status_type,
-            icon=self.config.status_icon
+            severity=self.config.status_type
         )
 
         for idx, btn in enumerate(self.buttons):
             task_num = idx + 1
-            # Update progress and button state
             self.progress.value = idx / total_tasks
             self.status_label.set_text(f"{idx}/{total_tasks} tasks completed")
             btn.btn.loading = True
             ui.notify(f"Processing task {task_num}/{total_tasks}", type=self.config.status_type, timeout=2)
             try:
-                # Reset button state before execution
                 btn.btn.props(f'icon={btn.config.default_icon} color={btn.config.severity}')
-                
-                # Execute task with proper ID and wait for completion
-                await asyncio.run.cpu_bound(
-                    ButtonBuilder._simulate_failure,
-                    task_num  # Pass the actual task number
-                )
+                await run.cpu_bound(ButtonBuilder._simulate_failure, task_num)
                 success_count += 1
-
             except Exception as e:
                 failure_count += 1
                 failed_tasks.append((task_num, str(e)))
                 btn.config.severity = SeverityLevel.ERROR
                 btn.btn.props(f'color={btn.config.severity} icon=error')
-                ui.notify(f"Task {idx+1} failed: {str(e)}", type='negative', timeout=3000)
-            # Update progress after each task regardless of success
+                error_msg = f"Task {task_num} failed - see logs for details"
+                self._notify(error_msg, severity='negative')
+                self._notify(f"Task {task_num} error: {str(e)}\n{traceback.format_exc()}", severity='negative', log=True)
+            
             completed = idx + 1
             self.progress.value = completed / total_tasks
             self.status_label.set_text(f"{completed}/{total_tasks} tasks completed")
             btn.btn.loading = False
 
-        # Update Run All button state
         final_icon = self.config.run_all_completion_icon if failure_count == 0 else 'error'
         final_color = 'positive' if failure_count == 0 else 'negative'
         run_all_btn.props(f'icon={final_icon} color={final_color}')
         run_all_btn.loading = False
 
-        # Show summary notification
         if failed_tasks:
-            error_list = '\n'.join([f"Task {num}: {msg}" for num, msg in failed_tasks])
-            ui.notify(f"Completed with {failure_count} errors:\n{error_list}", 
-                     type='negative',
-                     timeout=5000,
-                     multi_line=True,
-                     close_button='Close')
+            self._notify(f"Completed with {failure_count} errors", severity='negative', log=True)
         else:
-            ui.notify(f"All {success_count} tasks completed successfully!", 
-                     type='positive',
-                     icon=self.config.run_all_completion_icon)
+            self._notify(f"All {success_count} tasks completed successfully!", severity='positive')
 
         self.log_completion()
 
     def log_completion(self):
         """Log series completion with proper state handling"""
-        notification_type = self.config.log_severity  # Directly use string value aligned with NiceGUI types
-        
-        ui.notify(
+        self._notify(
             f"Completed series '{self.config.series_name}'",
-            type=notification_type,
-            icon=self.config.completion_icon,
-            timeout=self.config.buttons[0].notification_duration if self.config.buttons else 2000,
-            clearable=True
+            severity=self.config.log_severity,
+            log=True
         )
