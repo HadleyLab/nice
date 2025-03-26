@@ -11,6 +11,8 @@
   - Persisted in app.state.tasks
   - Atomic state updates through _update_state()
 - Notification System:
-  - Centralized logging with severity levels
+  - Native NiceGUI notifications with type-based styling
+  - Configurable icons and durations
+  - Automatic success/failure state tracking
   - Configurable display durations
   - Channel-based routing (tasks/system)
