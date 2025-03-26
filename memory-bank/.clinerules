@@ -1,17 +1,15 @@
-# Project Patterns
-1. Config-Builder Relationship:
-   - 1:1 pairing between Config and Builder classes
-   - Configs define state properties (colors, icons, durations)
-   - Builders handle UI/behavior implementation
-   - Access via `config.*` and `builder.*` namespaces
+# Git Workflow Enforcement
+strict_process_order: |
+  1. Implement code changes
+  2. Update memory bank documentation
+  3. Review changes with `git diff`
+  4. Commit with descriptive message
 
-2. State Management:
-   - Atomic updates through _update_state()
-   - Clean initialization sequence: create_ui → load_state → update_state
-   - State persistence in app.state.tasks dictionary
+commit_message_rules:
+  - reference_memory_bank_components: true
+  - conventional_commit_format: true
+  - section_updates_required: true
 
-3. Notification System:
-   - Centralized through utils/notifications.py
-   - Severity-based logging (INFO, WARN, ERROR)
-   - Configurable display durations
-   - Channel-based routing (tasks/system)
+pre_commit_checks:
+  - memory_bank_updated: true
+  - clinerules_current: true
