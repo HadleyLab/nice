@@ -1,26 +1,28 @@
-from pydantic import Field, model_validator, ConfigDict
-from ..base.config import BaseConfig, SeverityLevel
+from ..base.config import BaseConfig
+from nicegui import ui
 
 class ButtonConfig(BaseConfig):
-    """Configuration for interactive button elements"""
-    uid: str = Field(min_length=1)
-    task_name: str = Field(default="New Task", min_length=1)
-    default_icon: str = Field(default="play_arrow", pattern=r"^[a-z_]+$")
-    active_icon: str = Field(default="hourglass_empty", pattern=r"^[a-z_]+$")
-    completion_icon: str = Field(default="check", pattern=r"^[a-z_]+$")
-    notification_duration: int = Field(default=3000, gt=0)
-    failure_rate: float = Field(default=0.2, ge=0, le=1)
-    severity: SeverityLevel = Field(default=SeverityLevel.INFO)
+    """Button configuration using native NiceGUI reactivity"""
+    def __init__(self, 
+                 task_id: str = '',
+                 default_icon: str = 'play_circle',
+                 active_icon: str = 'hourglass_empty',
+                 completion_icon: str = 'check_circle',
+                 severity: str = 'primary',
+                 notification_duration: float = 2.5):
+        super().__init__(task_id)
+        self.icon = default_icon
+        self.default_icon = default_icon
+        self.active_icon = active_icon
+        self.completion_icon = completion_icon
+        self.severity = severity
+        self.loading = False
+        self.notification_duration = notification_duration
 
-    @model_validator(mode="after")
-    def validate_required_fields(self) -> "ButtonConfig":
-        if not self.uid:
-            raise ValueError("UID is required")
-        if not self.task_name:
-            raise ValueError("Task name is required")
-        return self
+    def __post_init__(self):
+        """Validate after initialization"""
+        super().__post_init__()
 
-    model_config = ConfigDict(
-        extra="forbid",
-        validate_default=True
-    )
+    def validate(self):
+        """Simplified validation using native reactivity"""
+        return super().validate() and bool(self.label)

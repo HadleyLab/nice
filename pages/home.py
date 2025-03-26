@@ -12,10 +12,9 @@ def create():
         
         # Single button demo
         single_config = ButtonConfig(
-            uid="single_task",
-            task_name="Single Task",
+            task_id="single_task",
             default_icon="play_arrow",
-            severity=SeverityLevel.SUCCESS
+            severity='success'
         )
         button_builder = ButtonBuilder(single_config)
         button_builder.build()
@@ -24,9 +23,9 @@ def create():
         series_config = SeriesConfig(
             series_name="Task Series",
             buttons=[
-                ButtonConfig(uid="task1", task_name="First Task", severity=SeverityLevel.INFO),
-                ButtonConfig(uid="task2", task_name="Second Task", severity=SeverityLevel.WARNING),
-                ButtonConfig(uid="task3", task_name="Third Task", severity=SeverityLevel.ERROR)
+                ButtonConfig(task_id="task1", severity='info'),
+                ButtonConfig(task_id="task2", severity='warning'),
+                ButtonConfig(task_id="task3", severity='error')
             ],
             log_severity=SeverityLevel.INFO,
             layout="row", 

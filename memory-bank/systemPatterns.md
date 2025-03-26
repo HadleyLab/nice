@@ -1,30 +1,39 @@
-# Architectural Patterns
+# System Architecture Patterns
 
-## Component Relationships
+## Reactive State Management
 ```mermaid
 flowchart TD
-    Base --> Button
-    Base --> Series
-    Button --> Pages
-    Series --> Pages
+    A[UI Element] --> B[ui.state()]
+    B --> C[Automatic Binding]
+    C --> D[DOM Update]
+    D -->|User Interaction| A
 ```
 
-## Configuration Management
-- Native niceGUI configuration system
-- Default values in component classes
-- Runtime customization through UI properties
-- Built-in type validation
+### Implementation Patterns
+1. **State Initialization**
+   ```python
+   # Dictionary-based state
+   self.progress_state = ui.state({'value': 0.0})
+   ```
 
-## UI Element Integration
-```mermaid
-flowchart TD
-    Init[Component Init] --> Render[UI Rendering]
-    Render -->|User Interaction| Update[State Update]
-    Update --> ReRender[Automatic UI Refresh]
-```
+2. **Reactive Binding**
+   ```python
+   ui.linear_progress().bind_value_from(self.progress_state, 'value')
+   ```
 
-## Notification Integration
-- Centralized task_log_and_notify() handler
-- Color-coded status messages
-- Dual logging (console + UI)
-- Error channel separation
+3. **State Updates**
+   ```python
+   _, set_progress = ui.state({'value': 0.0})  # Tuple unpacking
+   set_progress({'value': new_value})  # Proper state update
+   ```
+
+## Error Resolution History
+- Fixed AttributeError: module 'nicegui.ui' has no attribute 'ref'
+  - Migrated from deprecated `ui.ref()` to `ui.state()`
+  - Updated all binding references to use dictionary access
+  - Simplified state management pattern
+
+## Current Best Practices
+- Always use `ui.state()` with dictionary values
+- Prefer `bind_value_from()` for reactive bindings
+- Avoid tuple-state patterns

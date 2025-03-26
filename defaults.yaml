@@ -1,6 +1,6 @@
 # Default configuration values for UI components
 button:
-  task_name: "Perform Task"
+  task_id: "Perform Task"
   default_icon: "play_circle"
   active_icon: "hourglass_empty" 
   completion_icon: "check_circle"
