@@ -1,26 +1,28 @@
-from dataclasses import dataclass
+from ..base.config import BaseConfig, SeverityLevel
 
-@dataclass
-class ButtonConfig:
-    task_name: str
-    initial_color: str = "primary"
-    active_color: str = "blue"
-    success_color: str = "positive"
-    error_color: str = "negative"
-    initial_icon: str = "play_arrow"
-    active_icon: str = "autorenew"
-    success_icon: str = "check_circle"
-    error_icon: str = "error"
+class ButtonConfig(BaseConfig):
+    """Configuration for interactive button elements"""
+    task_name: str = "New Task"
+    default_icon: str = "play_arrow"
+    active_icon: str = "hourglass_empty" 
+    completion_icon: str = "check"
     notification_duration: int = 3000
-    log_severity: str = "info"
+    failure_rate: float = 0.2  # 20% simulated failure chance
+    severity: SeverityLevel = SeverityLevel.INFO
 
-    def __post_init__(self):
-        """Validate configuration values"""
+    def __init__(self,
+                 uid: str,
+                 task_name: str = "New Task",
+                 severity: SeverityLevel = SeverityLevel.INFO,
+                 **kwargs):
+        super().__init__(uid=uid)
+        self.task_name = task_name
+        self.color = severity.value
+        self.__dict__.update(kwargs)
+
+    def validate(self):
+        super().validate()
         if not self.task_name:
             raise ValueError("Task name is required")
-        if not all([self.initial_color, self.active_color, self.success_color, self.error_color]):
-            raise ValueError("All color fields must be set")
-        if not all([self.initial_icon, self.active_icon, self.success_icon, self.error_icon]):
-            raise ValueError("All icon fields must be set")
-        if self.notification_duration < 0:
-            raise ValueError("Notification duration must be positive")
+        if not 0 <= self.failure_rate <= 1:
+            raise ValueError("Failure rate must be between 0 and 1")

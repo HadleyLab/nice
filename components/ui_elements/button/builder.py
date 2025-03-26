@@ -1,6 +1,10 @@
-from nicegui import ui
+import random
+import traceback
+import asyncio
+import time
+from nicegui import ui, app, run
 from ..base.builder import BaseBuilder
-from .config import ButtonConfig
+from .config import ButtonConfig, SeverityLevel
 
 class ButtonBuilder(BaseBuilder):
     """Builder for interactive button components"""
@@ -12,7 +16,8 @@ class ButtonBuilder(BaseBuilder):
     def build(self):
         """Construct the button element"""
         super().build()
-        self.btn = ui.button(self.config.task_name)
+        self.btn = ui.button(self.config.task_name)\
+            .props(f'icon={self.config.default_icon} color={self.config.severity.value}')
         self._setup_handlers()
         return self.container
         
@@ -20,33 +25,58 @@ class ButtonBuilder(BaseBuilder):
         """Configure click handlers and animations"""
         self.btn.on_click(self._handle_click)
         
-    def _handle_click(self, event=None):
+    @staticmethod
+    def _simulate_failure(task_id: int):
+        """Simulate processing time and potential failure"""
+        time.sleep(0.3 + random.random())  # Varied processing time
+        if random.random() < 0.1667:  # ~1/6 chance to fail
+            raise ValueError(f"Task {task_id} failed randomly")
+        return True
+
+    async def _handle_click(self, event=None):
         """Handle button click with proper state management"""
-        try:
-            self.config.status = 'active'
-            self.update_state()
-            ui.notify(f"Starting: {self.config.task_name}", type='ongoing', color='blue')
-            
-            # Simulate task completion after delay
-            def complete_task():
-                self.config.status = 'completed'
-                self.update_state()
-                ui.notify(f"Completed: {self.config.task_name}", type='positive', color='green')
-                
-            ui.timer(2.0, complete_task, once=True)
-            
-        except Exception as e:
-            self.config.status = 'error'
-            self.update_state()
-            ui.notify(f"Failed: {self.config.task_name} - {str(e)}", type='negative', color='red')
-            print(f"ERROR: {self.config.task_name} - {str(e)}")  # Console logging
+        self.btn.props(f'icon={self.config.active_icon} color=primary')
+        self.btn.loading = True
+        ui.notify(f"Starting: {self.config.task_name}", 
+                type=self.config.severity.value,
+                clearable=True,
+                timeout=self.config.notification_duration)
         
-    def update_state(self):
-        """Update visual state with proper styling"""
-        color_map = {
-            'active': 'bg-blue-500',
-            'completed': 'bg-green-500',
-            'error': 'bg-red-500'
-        }
-        self.btn.classes(replace=color_map.get(self.config.status, 'bg-gray-500'))
-        self.btn.props(f'color={self.config.status}')
+        async def execute_task():
+            try:
+                # Properly handle synchronous operation
+                await run.cpu_bound(
+                    ButtonBuilder._simulate_failure,
+                    0  # Pass a default task ID for single button
+                )
+                
+                self.btn.props(f'icon={self.config.completion_icon} color=positive')
+                self.btn.loading = False
+                ui.notify(f"Completed: {self.config.task_name}", 
+                        type='positive',
+                        clearable=True,
+                        timeout=self.config.notification_duration)
+                
+                timer_complete = False
+                
+                def on_timer():
+                    nonlocal timer_complete
+                    timer_complete = True
+                
+                ui.timer(0.3, on_timer)
+                while not timer_complete:
+                    await asyncio.sleep(0.01)
+                
+                self.btn.props(f'icon={self.config.default_icon} color={self.config.severity.value}')
+                
+            except Exception as e:
+                traceback.print_exc()
+                self.config.severity = SeverityLevel.ERROR
+                self.btn.props(f'color={self.config.severity.value} icon=error')
+                self.btn.loading = False
+                ui.notify(f"Failed: {self.config.task_name} - {str(e)}", 
+                        type=self.config.severity.value,
+                        clearable=True,
+                        timeout=self.config.notification_duration)
+        
+        await execute_task()

@@ -1,16 +1,42 @@
-from dataclasses import dataclass
+from enum import Enum
+from pydantic import BaseModel
 
-@dataclass
-class BaseConfig:
-    """Base configuration class for UI elements"""
-    uid: str
-    style: dict = None
+class Color(str, Enum):
+    """Mirror of NiceGUI's color palette with additional semantic meanings"""
+    PRIMARY = 'primary'
+    SECONDARY = 'secondary'
+    ACCENT = 'accent'
+    POSITIVE = 'positive'
+    NEGATIVE = 'negative'
+    WARNING = 'warning'
+    INFO = 'info'
+    DARK = 'dark'
+    LIGHT = 'light'
+    TRANSPARENT = 'transparent'
     
-    def __init__(self, uid: str, style: dict = None):
-        self.uid = uid
-        self.style = style or {}
-        
-    def validate(self):
-        """Validate configuration settings"""
-        if not self.uid:
-            raise ValueError("UID is required for all UI elements")
+    # Semantic mappings
+    SUCCESS = POSITIVE
+    ERROR = NEGATIVE
+    ALERT = WARNING
+
+class BaseConfig(BaseModel):
+    """Base configuration model for UI elements"""
+    label: str = "Button"
+    color: str = Color.PRIMARY
+    state: str = "default"
+    
+    def update_state(self, new_state: str):
+        """Safely update state with validation"""
+        if new_state in ['active', 'completed', 'error', 'default']:
+            self.state = new_state
+    
+    class Config:
+        use_enum_values = True
+
+class SeverityLevel(str, Enum):
+    """Standardized severity levels mapped to NiceGUI colors"""
+    INFO = 'info'
+    SUCCESS = 'positive'
+    WARNING = 'warning'
+    ERROR = 'negative'
+    DEFAULT = 'primary'

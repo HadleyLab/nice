@@ -19,4 +19,9 @@ def register_pages():
 
 if __name__ in {"__main__", "__mp_main__"}:
     register_pages()
-    ui.run(title="Component Demo", port=8080)
+    ui.run(
+        title="Component Demo",
+        port=8080,
+        reload=True,
+        show=True
+    )

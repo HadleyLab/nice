@@ -1,4 +1,5 @@
 from components.ui_elements.button.config import ButtonConfig
+from components.ui_elements.base.config import SeverityLevel
 from components.ui_elements.button.builder import ButtonBuilder
 from components.ui_elements.series.config import SeriesConfig
 from components.ui_elements.series.builder import SeriesBuilder
@@ -11,9 +12,10 @@ def create():
         
         # Single button demo
         single_config = ButtonConfig(
+            uid="single_task",
             task_name="Single Task",
-            initial_color="green",
-            success_icon="task_alt"
+            default_icon="play_arrow",
+            severity=SeverityLevel.SUCCESS
         )
         button_builder = ButtonBuilder(single_config)
         button_builder.build()
@@ -22,12 +24,14 @@ def create():
         series_config = SeriesConfig(
             series_name="Task Series",
             buttons=[
-                ButtonConfig(task_name="First Task"),
-                ButtonConfig(task_name="Second Task", initial_color="purple"),
-                ButtonConfig(task_name="Third Task", log_severity="WARNING")
+                ButtonConfig(uid="task1", task_name="First Task", severity=SeverityLevel.INFO),
+                ButtonConfig(uid="task2", task_name="Second Task", severity=SeverityLevel.WARNING),
+                ButtonConfig(uid="task3", task_name="Third Task", severity=SeverityLevel.ERROR)
             ],
-            layout="row",
-            spacing="gap-8"
+            log_severity=SeverityLevel.INFO,
+            layout="row", 
+            spacing="gap-8",
+            enable_run_all=True
         )
         series_builder = SeriesBuilder(series_config)
         series_builder.build()
